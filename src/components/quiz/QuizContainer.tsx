@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import type { QuizQuestion, QuizState } from "@/lib/types";
 import { fetchQuizQuestionsAction } from "@/app/actions";
@@ -21,27 +21,39 @@ export function QuizContainer() {
   const [quizState, setQuizState] = useState<QuizState>("welcome");
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
+  const initialLoadRef = useRef(false); // To track if initial load attempt has been made
+
   const loadQuestions = useCallback(async () => {
     setQuizState("loading");
     setFeedbackMessage(null);
+    // Do not reset game-specific state like score/index here.
+    // That should be handled by the function calling loadQuestions if it's a restart or new game.
     try {
       const fetchedQuestions = await fetchQuizQuestionsAction();
+      initialLoadRef.current = true; // Mark that an attempt to load has been made.
       if (fetchedQuestions && fetchedQuestions.length > 0) {
         setQuestions(fetchedQuestions.slice(0, TOTAL_QUESTIONS));
-        setCurrentQuestionIndex(0);
-        setSelectedAnswerIndex(null);
-        setScore(0);
-        setQuizState("playing");
+        setQuizState("welcome"); // Ready to show welcome screen with active start button.
       } else {
+        setQuestions([]); // Ensure questions are empty if fetch failed to return any.
         setFeedbackMessage("Грешка: Није могуће учитати питања. Покушајте поново.");
         setQuizState("error");
       }
     } catch (error) {
       console.error("Failed to fetch questions:", error);
+      setQuestions([]); // Ensure questions are empty on error.
       setFeedbackMessage("Грешка приликом учитавања питања. Проверите интернет конекцију и покушајте поново.");
       setQuizState("error");
     }
-  }, []);
+  }, []); // Empty dependency array: loadQuestions is stable.
+
+  // Effect for initial question loading
+  useEffect(() => {
+    // Only attempt to load if it hasn't been attempted yet and we are in the initial welcome state.
+    if (quizState === "welcome" && !initialLoadRef.current) {
+      loadQuestions();
+    }
+  }, [quizState, loadQuestions]);
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (quizState !== "playing") return;
@@ -70,11 +82,44 @@ export function QuizContainer() {
     }
   };
 
+  const handleStartQuiz = () => {
+    if (questions.length > 0) {
+      // Ensure game state is reset for a fresh start
+      setCurrentQuestionIndex(0);
+      setSelectedAnswerIndex(null);
+      setScore(0);
+      setFeedbackMessage(null);
+      setQuizState("playing");
+    } else if (quizState !== 'loading' && quizState !== 'error') {
+      // If no questions, and not already loading or in error, attempt to load.
+      loadQuestions();
+    }
+  };
+
   const handleRestart = () => {
-    setQuizState("welcome");
+    setCurrentQuestionIndex(0);
+    setSelectedAnswerIndex(null);
+    setScore(0);
+    setFeedbackMessage(null);
+    setQuestions([]); // Clear questions
+    initialLoadRef.current = false; // Reset the initial load flag to allow useEffect to reload
+    setQuizState("welcome"); // This will trigger the useEffect in the next render cycle
   };
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  // Display global loader only during the very first loading attempt phase
+  if (quizState === "loading" && !initialLoadRef.current) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl min-h-screen p-4 md:p-6 space-y-6 md:space-y-8">
+        <div className="text-center space-y-4 py-10">
+          <KulturniKrugLogo className="mx-auto drop-shadow-lg mb-6" />
+          <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
+          <p className="text-xl text-muted-foreground text-shadow-sm">Учитавање питања...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl p-4 md:p-6 space-y-6 md:space-y-8">
@@ -89,20 +134,35 @@ export function QuizContainer() {
           </p>
           <Button
             size="lg"
-            onClick={loadQuestions}
+            onClick={handleStartQuiz}
+            // Disable button if questions are currently being loaded (and none are available yet for playing)
+            disabled={quizState === 'loading' && questions.length === 0}
             className="text-xl px-8 py-6 shadow-button-3d hover-shadow-button-3d-primary transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 ease-in-out"
           >
-            Започни Квиз
+            {/* Show loading indicator on button if it triggered a load and questions are not yet ready */}
+            {quizState === 'loading' && questions.length === 0 ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Учитавање...
+              </>
+            ) : (
+              "Започни Квиз"
+            )}
           </Button>
         </div>
       )}
 
-      {quizState === "loading" && (
-        <div className="text-center space-y-4 py-10">
+      {/* This specific loading state is for when loadQuestions is called by the start button itself,
+          or if a reload is triggered while already on the welcome screen.
+          The full-page initial loader is handled above. */}
+      {quizState === "loading" && initialLoadRef.current && questions.length === 0 && (
+         <div className="text-center space-y-4 py-10">
+          <KulturniKrugLogo className="mx-auto drop-shadow-lg mb-6" />
           <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
           <p className="text-xl text-muted-foreground text-shadow-sm">Учитавање питања...</p>
         </div>
       )}
+
 
       {quizState === "error" && (
          <div className="text-center space-y-4 py-10 animate-in fade-in-0 duration-500">
@@ -112,7 +172,7 @@ export function QuizContainer() {
           </p>
           <Button
             size="lg"
-            onClick={handleRestart}
+            onClick={handleRestart} // Restart will attempt to load questions again
             variant="outline"
             className="text-lg shadow-button-3d hover-shadow-button-3d-neutral transform hover:scale-105 transition-all duration-300 ease-in-out"
           >
