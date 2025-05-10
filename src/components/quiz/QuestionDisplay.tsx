@@ -4,7 +4,6 @@
 import type { QuizQuestion } from "@/lib/types";
 import { AnswerOption } from "./AnswerOption";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// Info icon import is removed as it's no longer used here.
 
 interface QuestionDisplayProps {
   question: QuizQuestion;
@@ -24,12 +23,12 @@ export function QuestionDisplay({
   totalQuestions,
 }: QuestionDisplayProps) {
   return (
-    <Card className="w-full shadow-2xl animate-in fade-in-0 slide-in-from-bottom-5 duration-500">
+    <Card className="w-full shadow-3d hover-shadow-3d transition-all duration-300 ease-in-out transform hover:-translate-y-1 animate-in fade-in-0 slide-in-from-bottom-5">
       <CardHeader>
-        <CardDescription className="text-lg text-primary">
+        <CardDescription className="text-lg text-primary text-shadow-sm">
           Питање {questionNumber} од {totalQuestions}
         </CardDescription>
-        <CardTitle className="text-2xl md:text-3xl !mt-2 leading-tight">
+        <CardTitle className="text-2xl md:text-3xl !mt-2 leading-tight text-shadow">
           {question.question}
         </CardTitle>
       </CardHeader>
@@ -48,9 +47,7 @@ export function QuestionDisplay({
             />
           ))}
         </div>
-        {/* Explanation section has been removed from here. It will be handled by QuizContainer. */}
       </CardContent>
     </Card>
   );
 }
-

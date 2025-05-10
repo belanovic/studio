@@ -16,11 +16,11 @@ export function KulturniKrugLogo(props: SVGProps<SVGSVGElement>) {
           <stop offset="0%" style={{ stopColor: 'hsl(var(--primary))', stopOpacity: 1 }} />
           <stop offset="100%" style={{ stopColor: 'hsl(var(--accent))', opacity: 0.8 }} />
         </linearGradient>
-        <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-          <feOffset dx="2" dy="2" result="offsetblur"/>
+        <filter id="dropShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+          <feOffset dx="3" dy="4" result="offsetblur"/>
           <feComponentTransfer>
-            <feFuncA type="linear" slope="0.5"/>
+            <feFuncA type="linear" slope="0.6"/>
           </feComponentTransfer>
           <feMerge>
             <feMergeNode/>
@@ -45,6 +45,7 @@ export function KulturniKrugLogo(props: SVGProps<SVGSVGElement>) {
         textAnchor="middle"
         stroke="hsl(var(--background))"
         strokeWidth="0.5"
+        className="text-shadow-sm"
       >
         КК
       </text>
