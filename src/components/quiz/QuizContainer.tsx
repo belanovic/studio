@@ -7,8 +7,9 @@ import type { QuizQuestion, QuizState } from "@/lib/types";
 import { fetchQuizQuestionsAction } from "@/app/actions";
 import { QuestionDisplay } from "./QuestionDisplay";
 import { QuizResults } from "./QuizResults";
-import { Loader2, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCircle2, XCircle, Info } from "lucide-react";
 import { KulturniKrugLogo } from "@/components/icons/KulturniKrugLogo";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const TOTAL_QUESTIONS = 5;
 
@@ -26,7 +27,6 @@ export function QuizContainer() {
     try {
       const fetchedQuestions = await fetchQuizQuestionsAction();
       if (fetchedQuestions && fetchedQuestions.length > 0) {
-        // Ensure we only use up to TOTAL_QUESTIONS, even if API returns more or less due to generation issues
         setQuestions(fetchedQuestions.slice(0, TOTAL_QUESTIONS));
         setCurrentQuestionIndex(0);
         setSelectedAnswerIndex(null);
@@ -72,7 +72,6 @@ export function QuizContainer() {
 
   const handleRestart = () => {
     setQuizState("welcome");
-    // Questions will be re-fetched when 'welcome' state transitions to 'loading' via start button
   };
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -128,14 +127,31 @@ export function QuizContainer() {
             selectedAnswerIndex={selectedAnswerIndex}
             showFeedback={quizState === "feedback"}
             questionNumber={currentQuestionIndex + 1}
-            totalQuestions={questions.length > 0 ? questions.length : TOTAL_QUESTIONS} 
+            totalQuestions={questions.length > 0 ? questions.length : TOTAL_QUESTIONS}
           />
+
+          {quizState === "feedback" && currentQuestion.explanation && (
+            <Card className="w-full mt-6 shadow-xl animate-in fade-in-0 slide-in-from-bottom-5 duration-500 bg-card text-card-foreground">
+              <CardHeader>
+                <div className="flex items-center">
+                  <Info className="h-6 w-6 text-primary mr-3 shrink-0" />
+                  <CardTitle className="text-xl font-semibold text-primary">Додатне информације:</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  {currentQuestion.explanation}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {quizState === "feedback" && (
             <div className="flex flex-col items-center space-y-4 w-full pt-4 animate-in fade-in-0 duration-300">
               {feedbackMessage && (
                 <div className={`flex items-center text-2xl font-semibold p-3 rounded-md ${selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ? 'text-green-400 bg-green-500/10' : 'text-red-400 bg-red-500/10'}`}>
-                  {selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ? 
-                    <CheckCircle2 className="mr-2 h-7 w-7"/> : 
+                  {selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ?
+                    <CheckCircle2 className="mr-2 h-7 w-7"/> :
                     <XCircle className="mr-2 h-7 w-7"/>}
                   {feedbackMessage}
                 </div>

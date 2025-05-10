@@ -4,7 +4,7 @@
 import type { QuizQuestion } from "@/lib/types";
 import { AnswerOption } from "./AnswerOption";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Info } from "lucide-react";
+// Info icon import is removed as it's no longer used here.
 
 interface QuestionDisplayProps {
   question: QuizQuestion;
@@ -48,19 +48,7 @@ export function QuestionDisplay({
             />
           ))}
         </div>
-        {showFeedback && question.explanation && (
-          <div className="mt-6 p-4 bg-secondary/20 rounded-md border border-border shadow-sm">
-            <div className="flex items-start">
-              <Info className="h-5 w-5 text-primary mr-3 mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-semibold text-primary mb-1">Додатне информације:</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {question.explanation}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Explanation section has been removed from here. It will be handled by QuizContainer. */}
       </CardContent>
     </Card>
   );
