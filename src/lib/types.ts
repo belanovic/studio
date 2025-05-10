@@ -6,3 +6,4 @@ export interface QuizQuestion extends GenerateQuizQuestionOutput {
 }
 
 export type QuizState = "welcome" | "loading" | "playing" | "feedback" | "results" | "error";
+
