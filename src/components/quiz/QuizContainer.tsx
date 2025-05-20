@@ -111,7 +111,7 @@ export function QuizContainer() {
   // Display global loader only during the very first loading attempt phase
   if (quizState === "loading" && !initialLoadRef.current) {
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-2xl min-h-screen p-4 md:p-6 space-y-6 md:space-y-8">
+      <div className="flex flex-col items-center justify-center w-full max-w-5xl min-h-screen p-4 md:p-6 space-y-6 md:space-y-8">
         <div className="text-center space-y-4 py-10">
           <KulturniKrugLogo className="mx-auto drop-shadow-lg mb-6" />
           <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
@@ -122,7 +122,7 @@ export function QuizContainer() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl p-4 md:p-6 space-y-6 md:space-y-8">
+    <div className="flex flex-col items-center justify-center w-full max-w-5xl p-4 md:p-6 space-y-6 md:space-y-8">
       {quizState === "welcome" && (
         <div className="text-center space-y-8 animate-in fade-in-0 zoom-in-95 duration-500">
           <KulturniKrugLogo className="mx-auto drop-shadow-lg" />
