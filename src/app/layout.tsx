@@ -5,12 +5,12 @@ import './globals.css';
 
 const geistSans = Geist({ // Correct instantiation
   variable: '--font-geist-sans',
-  subsets: ['latin', 'cyrillic'], // Added cyrillic subset
+  subsets: ['latin', 'latin-ext'], // Changed 'cyrillic' to 'latin-ext'
 });
 
 const geistMono = Geist_Mono({ // Correct instantiation
   variable: '--font-geist-mono',
-  subsets: ['latin', 'cyrillic'], // Added cyrillic subset
+  subsets: ['latin', 'latin-ext'], // Changed 'cyrillic' to 'latin-ext'
 });
 
 export const metadata: Metadata = {
