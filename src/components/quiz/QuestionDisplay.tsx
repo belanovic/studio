@@ -4,6 +4,7 @@
 import type { QuizQuestion } from "@/lib/types";
 import { AnswerOption } from "./AnswerOption";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface QuestionDisplayProps {
   question: QuizQuestion;
@@ -12,6 +13,7 @@ interface QuestionDisplayProps {
   showFeedback: boolean;
   questionNumber: number;
   totalQuestions: number;
+  className?: string;
 }
 
 export function QuestionDisplay({
@@ -21,19 +23,24 @@ export function QuestionDisplay({
   showFeedback,
   questionNumber,
   totalQuestions,
+  className,
 }: QuestionDisplayProps) {
   return (
-    <Card className="w-full shadow-3d hover-shadow-3d transition-all duration-300 ease-in-out transform hover:-translate-y-1 animate-in fade-in-0 slide-in-from-bottom-5">
-      <CardHeader>
-        <CardDescription className="text-lg text-primary text-shadow-sm">
+    <Card className={cn(
+      "w-full shadow-3d hover-shadow-3d transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 animate-in fade-in-0 slide-in-from-bottom-3",
+      "flex flex-col", // Added for flex-grow to work
+      className
+      )}>
+      <CardHeader className="p-3">
+        <CardDescription className="text-sm text-primary text-shadow-sm">
           Питање {questionNumber} од {totalQuestions}
         </CardDescription>
-        <CardTitle className="text-2xl md:text-3xl !mt-2 leading-tight text-shadow">
+        <CardTitle className="text-lg md:text-xl !mt-1 leading-tight text-shadow">
           {question.question}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3 md:space-y-4">
+      <CardContent className="p-3 pt-0 space-y-2 md:space-y-2.5 flex-grow"> {/* Added flex-grow */}
+        <div className="space-y-2 md:space-y-2.5">
           {question.answers.map((answer, index) => (
             <AnswerOption
               key={`${question.id}-answer-${index}`}
