@@ -5,12 +5,12 @@ import './globals.css';
 
 const geistSans = Geist({ // Correct instantiation
   variable: '--font-geist-sans',
-  subsets: ['latin', 'latin-ext'], // Changed 'cyrillic' to 'latin-ext'
+  subsets: ['latin', 'latin-ext'],
 });
 
 const geistMono = Geist_Mono({ // Correct instantiation
   variable: '--font-geist-mono',
-  subsets: ['latin', 'latin-ext'], // Changed 'cyrillic' to 'latin-ext'
+  subsets: ['latin', 'latin-ext'],
 });
 
 export const metadata: Metadata = {
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sr-Cyrl">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}>
+    <html lang="sr-Cyrl" className="h-[450px] overflow-hidden">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark h-full overflow-hidden`}>
         {children}
       </body>
     </html>
