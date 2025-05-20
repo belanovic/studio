@@ -1,72 +1,39 @@
 
 "use server";
 
-import { generateQuizQuestion, type GenerateQuizQuestionOutput } from "@/ai/flows/generate-quiz-question";
-import { validateQuizQuality } from "@/ai/flows/validate-quiz-quality";
 import type { QuizQuestion } from "@/lib/types";
+import { allQuestions } from "@/lib/questions";
 
 const TOTAL_QUESTIONS_PER_ROUND = 5;
-const MAX_RETRIES_PER_QUESTION = 3;
+
+// Helper function to shuffle an array (Fisher-Yates shuffle)
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
 
 export async function fetchQuizQuestionsAction(): Promise<QuizQuestion[]> {
-  const questions: QuizQuestion[] = [];
-  let attemptsToFetchAll = 0;
-  const MAX_TOTAL_ATTEMPTS = TOTAL_QUESTIONS_PER_ROUND + 5; // Allow some buffer for retries
+  console.log(`Attempting to fetch ${TOTAL_QUESTIONS_PER_ROUND} static questions.`);
 
-  while (questions.length < TOTAL_QUESTIONS_PER_ROUND && attemptsToFetchAll < MAX_TOTAL_ATTEMPTS) {
-    attemptsToFetchAll++;
-    let currentQuestionRetries = 0;
-    let questionIsValid = false;
-    let generatedQuestionData: GenerateQuizQuestionOutput | null = null;
-
-    console.log(`Attempting to generate question #${questions.length + 1}`);
-
-    while (currentQuestionRetries < MAX_RETRIES_PER_QUESTION && !questionIsValid) {
-      try {
-        generatedQuestionData = await generateQuizQuestion({});
-        if (generatedQuestionData) {
-          console.log(`Validating question: ${generatedQuestionData.question}`);
-          const validationResult = await validateQuizQuality({
-            question: generatedQuestionData.question,
-            answers: generatedQuestionData.answers,
-            correctAnswerIndex: generatedQuestionData.correctAnswerIndex,
-          });
-
-          if (validationResult.isValid) {
-            questionIsValid = true;
-            console.log("Question is valid.");
-          } else {
-            console.warn(`Generated question invalid: ${validationResult.reason || 'No reason provided'}. Retry ${currentQuestionRetries + 1}/${MAX_RETRIES_PER_QUESTION}`);
-            currentQuestionRetries++;
-          }
-        } else {
-          console.warn(`Failed to generate question data. Retry ${currentQuestionRetries + 1}/${MAX_RETRIES_PER_QUESTION}`);
-          currentQuestionRetries++;
-        }
-      } catch (error) {
-        console.error(`Error during question generation/validation (Retry ${currentQuestionRetries + 1}/${MAX_RETRIES_PER_QUESTION}):`, error);
-        currentQuestionRetries++;
-      }
-    }
-
-    if (questionIsValid && generatedQuestionData) {
-      questions.push({
-        ...generatedQuestionData,
-        id: `q-${Date.now()}-${questions.length}`, // Simple unique ID
-      });
-    } else {
-      console.error(`Failed to generate a valid question for slot ${questions.length + 1} after ${MAX_RETRIES_PER_QUESTION} retries.`);
-      // If we can't generate enough valid questions, it might be better to throw an error
-      // or return what we have and let the client decide. For now, we continue.
-    }
+  if (!allQuestions || allQuestions.length === 0) {
+    console.error("Static questions list is empty or not loaded.");
+    throw new Error("Нема доступних питања. Молимо контактирајте администратора.");
   }
 
-  if (questions.length < TOTAL_QUESTIONS_PER_ROUND) {
-    console.warn(`Could only fetch ${questions.length} valid questions out of ${TOTAL_QUESTIONS_PER_ROUND} requested.`);
-    // Optionally throw an error here if 5 questions are strictly required.
-    // throw new Error(`Неуспешно генерисање довољно питања. Покушајте поново касније.`);
+  const shuffledQuestions = shuffleArray(allQuestions);
+  
+  const selectedQuestions = shuffledQuestions.slice(0, TOTAL_QUESTIONS_PER_ROUND);
+
+  if (selectedQuestions.length < TOTAL_QUESTIONS_PER_ROUND && allQuestions.length < TOTAL_QUESTIONS_PER_ROUND) {
+    console.warn(`Could only fetch ${selectedQuestions.length} questions because only ${allQuestions.length} are available in total.`);
+  } else if (selectedQuestions.length < TOTAL_QUESTIONS_PER_ROUND) {
+     console.warn(`Could only fetch ${selectedQuestions.length} questions for the round. This usually means there are fewer than ${TOTAL_QUESTIONS_PER_ROUND} questions defined.`);
   }
   
-  console.log(`Fetched ${questions.length} questions successfully.`);
-  return questions;
+  console.log(`Fetched ${selectedQuestions.length} questions successfully.`);
+  return selectedQuestions;
 }
