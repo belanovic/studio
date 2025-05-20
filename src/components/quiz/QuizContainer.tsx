@@ -104,32 +104,32 @@ export function QuizContainer() {
 
   if (quizState === "loading" && !initialLoadRef.current) {
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-2xl h-full p-2 space-y-4">
-        <div className="text-center space-y-3">
-          <KulturniKrugLogo width={60} height={60} className="mx-auto drop-shadow-lg mb-4" />
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
-          <p className="text-lg text-muted-foreground text-shadow-sm">Учитавање питања...</p>
+      <div className="flex flex-col items-center justify-center w-full max-w-xl h-full p-2 space-y-3">
+        <div className="text-center space-y-2">
+          <KulturniKrugLogo width={50} height={50} className="mx-auto drop-shadow-lg mb-3" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
+          <p className="text-base text-muted-foreground text-shadow-sm">Учитавање питања...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl h-full p-2 space-y-3">
+    <div className="flex flex-col items-center justify-center w-full max-w-xl h-full p-2 space-y-2">
       {quizState === "welcome" && (
-        <div className="flex flex-col justify-center items-center flex-grow text-center space-y-4 animate-in fade-in-0 zoom-in-95 duration-500">
-          <KulturniKrugLogo width={60} height={60} className="mx-auto drop-shadow-lg" />
-          <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-orange-400 to-amber-500 text-shadow-glow-primary">
+        <div className="flex flex-col justify-center items-center flex-grow text-center space-y-3 animate-in fade-in-0 zoom-in-95 duration-500">
+          <KulturniKrugLogo width={50} height={50} className="mx-auto drop-shadow-lg" />
+          <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-orange-400 to-amber-500 text-shadow-glow-primary">
             Културни Круг
           </h1>
-          <p className="text-base text-muted-foreground text-shadow-sm">
+          <p className="text-sm text-muted-foreground text-shadow-sm">
             Тестирајте своје знање из опште културе!
           </p>
           <Button
-            size="md"
+            size="sm"
             onClick={handleStartQuiz}
             disabled={quizState === 'loading' && questions.length === 0}
-            className="text-base px-6 py-3 shadow-button-3d hover-shadow-button-3d-primary transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 ease-in-out"
+            className="text-sm px-5 py-2.5 shadow-button-3d hover-shadow-button-3d-primary transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 ease-in-out"
           >
             {quizState === 'loading' && questions.length === 0 ? (
               <>
@@ -144,25 +144,25 @@ export function QuizContainer() {
       )}
 
       {quizState === "loading" && initialLoadRef.current && questions.length === 0 && (
-         <div className="flex flex-col justify-center items-center flex-grow text-center space-y-3">
-          <KulturniKrugLogo width={60} height={60} className="mx-auto drop-shadow-lg mb-4" />
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
-          <p className="text-lg text-muted-foreground text-shadow-sm">Учитавање питања...</p>
+         <div className="flex flex-col justify-center items-center flex-grow text-center space-y-2">
+          <KulturniKrugLogo width={50} height={50} className="mx-auto drop-shadow-lg mb-3" />
+          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
+          <p className="text-base text-muted-foreground text-shadow-sm">Учитавање питања...</p>
         </div>
       )}
 
 
       {quizState === "error" && (
-         <div className="flex flex-col justify-center items-center flex-grow text-center space-y-3 animate-in fade-in-0 duration-500">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto drop-shadow-[0_0_8px_hsl(var(--destructive)/0.5)]" />
-          <p className="text-lg text-destructive text-shadow">
+         <div className="flex flex-col justify-center items-center flex-grow text-center space-y-2 animate-in fade-in-0 duration-500">
+          <AlertTriangle className="h-10 w-10 text-destructive mx-auto drop-shadow-[0_0_8px_hsl(var(--destructive)/0.5)]" />
+          <p className="text-base text-destructive text-shadow">
             {feedbackMessage || "Дошло је до грешке."}
           </p>
           <Button
-            size="md"
+            size="sm"
             onClick={handleRestart}
             variant="outline"
-            className="text-base shadow-button-3d hover-shadow-button-3d-neutral transform hover:scale-105 transition-all duration-300 ease-in-out"
+            className="text-sm shadow-button-3d hover-shadow-button-3d-neutral transform hover:scale-105 transition-all duration-300 ease-in-out"
           >
             Покушај поново
           </Button>
@@ -178,39 +178,39 @@ export function QuizContainer() {
             showFeedback={quizState === "feedback"}
             questionNumber={currentQuestionIndex + 1}
             totalQuestions={questions.length > 0 ? questions.length : TOTAL_QUESTIONS}
-            className="flex-grow mb-2" // Added flex-grow and bottom margin
+            className="flex-grow mb-1.5" 
           />
 
           {quizState === "feedback" && (
-            <div className="shrink-0"> {/* This section should not grow */}
+            <div className="shrink-0"> 
               {currentQuestion.explanation && (
-                <Card className="w-full mt-1 shadow-md animate-in fade-in-0 slide-in-from-bottom-3 duration-300 bg-card text-card-foreground">
-                  <CardHeader className="p-2">
+                <Card className="w-full mt-0.5 shadow-md animate-in fade-in-0 slide-in-from-bottom-3 duration-300 bg-card text-card-foreground">
+                  <CardHeader className="p-1.5">
                     <div className="flex items-center">
-                      <Info className="h-5 w-5 text-primary mr-2 shrink-0 drop-shadow-[0_0_5px_hsl(var(--primary)/0.5)]" />
-                      <CardTitle className="text-base font-semibold text-primary text-shadow-glow-primary">Додатне информације:</CardTitle>
+                      <Info className="h-4 w-4 text-primary mr-1.5 shrink-0 drop-shadow-[0_0_5px_hsl(var(--primary)/0.5)]" />
+                      <CardTitle className="text-sm font-semibold text-primary text-shadow-glow-primary">Инфо:</CardTitle>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-2 pt-0">
-                    <p className="text-sm text-muted-foreground leading-snug text-shadow-sm">
+                  <CardContent className="p-1.5 pt-0">
+                    <p className="text-xs text-muted-foreground leading-snug text-shadow-sm">
                       {currentQuestion.explanation}
                     </p>
                   </CardContent>
                 </Card>
               )}
-              <div className="flex flex-col items-center space-y-2 w-full pt-2 animate-in fade-in-0 duration-300">
+              <div className="flex flex-col items-center space-y-1.5 w-full pt-1.5 animate-in fade-in-0 duration-300">
                 {feedbackMessage && (
-                  <div className={`flex items-center text-lg font-semibold p-1.5 rounded-md ${selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ? 'text-green-400 bg-green-500/10 text-shadow-glow-success' : 'text-red-400 bg-red-500/10 text-shadow-glow-destructive'}`}>
+                  <div className={`flex items-center text-base font-semibold p-1 rounded-md ${selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ? 'text-green-400 bg-green-500/10 text-shadow-glow-success' : 'text-red-400 bg-red-500/10 text-shadow-glow-destructive'}`}>
                     {selectedAnswerIndex !== null && questions[currentQuestionIndex].answers[selectedAnswerIndex] && selectedAnswerIndex === questions[currentQuestionIndex].correctAnswerIndex ?
-                      <CheckCircle2 className="mr-1.5 h-5 w-5"/> :
-                      <XCircle className="mr-1.5 h-5 w-5"/>}
+                      <CheckCircle2 className="mr-1 h-4 w-4"/> :
+                      <XCircle className="mr-1 h-4 w-4"/>}
                     {feedbackMessage}
                   </div>
                 )}
                 <Button
-                  size="md"
+                  size="sm"
                   onClick={handleNext}
-                  className="w-full md:w-auto text-base py-2 shadow-button-3d hover-shadow-button-3d-primary transform hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 ease-in-out"
+                  className="w-full md:w-auto text-sm py-1.5 shadow-button-3d hover-shadow-button-3d-primary transform hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 ease-in-out"
                 >
                   {currentQuestionIndex < questions.length - 1 ? "Следеће питање" : "Види Резултате"}
                 </Button>

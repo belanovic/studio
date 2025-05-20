@@ -28,19 +28,19 @@ export function QuestionDisplay({
   return (
     <Card className={cn(
       "w-full shadow-3d hover-shadow-3d transition-all duration-300 ease-in-out transform hover:-translate-y-0.5 animate-in fade-in-0 slide-in-from-bottom-3",
-      "flex flex-col", // Added for flex-grow to work
+      "flex flex-col", 
       className
       )}>
-      <CardHeader className="p-3">
-        <CardDescription className="text-sm text-primary text-shadow-sm">
+      <CardHeader className="p-2">
+        <CardDescription className="text-xs text-primary text-shadow-sm">
           Питање {questionNumber} од {totalQuestions}
         </CardDescription>
-        <CardTitle className="text-lg md:text-xl !mt-1 leading-tight text-shadow">
+        <CardTitle className="text-base md:text-lg !mt-0.5 leading-tight text-shadow">
           {question.question}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3 pt-0 space-y-2 md:space-y-2.5 flex-grow"> {/* Added flex-grow */}
-        <div className="space-y-2 md:space-y-2.5">
+      <CardContent className="p-2 pt-0 space-y-1.5 md:space-y-2 flex-grow">
+        <div className="space-y-1.5 md:space-y-2">
           {question.answers.map((answer, index) => (
             <AnswerOption
               key={`${question.id}-answer-${index}`}
